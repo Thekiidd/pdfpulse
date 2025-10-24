@@ -22,7 +22,7 @@ const MergeTool = () => {
         setErrorMsg('Solo PDFs permitidos');
         return false;
       }
-      if (f.size > 5 * 1024 * 1024) {
+      if (f.size > 10 * 1024 * 1024) {
         setErrorMsg('File >5MB no permitido');
         return false;
       }
