@@ -4,7 +4,6 @@ import { HomeIcon, ScissorsIcon, DocumentDuplicateIcon, DocumentTextIcon, ArrowL
 import { PDFDocument } from 'pdf-lib';
 import mammoth from 'mammoth';
 import html2canvas from 'html2canvas';
-import { Analytics } from "@vercel/analytics/next"
 
 // Merge PDFs
 const MergeTool = () => {

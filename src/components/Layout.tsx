@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from './common/Button';
-import { Analytics } from "@vercel/analytics/next"
 
 const Layout = ({ tool, setTool }) => (
   <>

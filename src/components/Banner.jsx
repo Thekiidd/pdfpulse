@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { ArrowDownIcon } from '@heroicons/react/24/outline';
-import { Analytics } from "@vercel/analytics/next"
 
 const Banner = () => {
   return (

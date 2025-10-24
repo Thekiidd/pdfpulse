@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Bars3Icon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { Analytics } from "@vercel/analytics/next"
 
 const Navbar = ({ onSearch }) => {
   const [isOpen, setIsOpen] = useState(false);

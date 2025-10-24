@@ -1,5 +1,4 @@
 import React from 'react';
-import { Analytics } from "@vercel/analytics/next"
 
 const Loader = () => (
   <div className="flex items-center space-x-2">

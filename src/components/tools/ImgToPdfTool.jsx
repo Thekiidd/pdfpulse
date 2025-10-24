@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import Button from '../common/Button';  // Si lo tienes, sino usa <button>
-import { Analytics } from "@vercel/analytics/next"
 
 const ImgToPdfTool = () => {
   const [files, setFiles] = useState([]);
