@@ -2,14 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-.tool-card {
-  @apply bg-white text-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300;
+body {
+  background-color: #1a1a1a;  /* Dark */
+  color: white;
+  font-family: 'Arial', sans-serif;
 }
 
-.btn-primary {
-  @apply bg-pulse-600 text-white px-6 py-3 rounded font-medium hover:bg-pulse-700 transition-colors;
+.button-focus:focus {
+  outline: none;
+  ring: 2px solid red;
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.5);
 }
 
-.btn-secondary {
-  @apply bg-gray-200 text-gray-800 px-6 py-3 rounded font-medium hover:bg-gray-300 transition-colors;
+.error {
+  color: #ff0000;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
 }

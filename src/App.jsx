@@ -1,24 +1,36 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  HomeIcon,
-  ScissorsIcon,
-  DocumentDuplicateIcon,
-  DocumentTextIcon, // ✅ reemplazo correcto de FileTextIcon
-  ArrowLeftIcon,
-} from "@heroicons/react/24/outline";
+import { HomeIcon, ScissorsIcon, DocumentDuplicateIcon, DocumentTextIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { PDFDocument } from 'pdf-lib';
 import mammoth from 'mammoth';
 import html2canvas from 'html2canvas';
-import Navbar from './components/Navbar';
-import Banner from './components/Banner';
 
-// Merge PDFs Component
+// Merge PDFs
 const MergeTool = () => {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const validateFiles = (newFiles) => {
+    if (newFiles.length > 10) {
+      setErrorMsg('Máximo 10 files');
+      return false;
+    }
+    for (let f of newFiles) {
+      if (f.type !== 'application/pdf') {
+        setErrorMsg('Solo PDFs permitidos');
+        return false;
+      }
+      if (f.size > 5 * 1024 * 1024) {
+        setErrorMsg('File >5MB no permitido');
+        return false;
+      }
+    }
+    return true;
+  };
 
   const handleMerge = async () => {
+    setErrorMsg('');
     if (files.length < 2) return;
     setLoading(true);
     try {
@@ -38,7 +50,7 @@ const MergeTool = () => {
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      alert('Error: ' + err.message);
+      setErrorMsg('Error: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -46,20 +58,52 @@ const MergeTool = () => {
 
   return (
     <div className="space-y-4">
-      <input type="file" multiple accept=".pdf" onChange={(e) => setFiles(Array.from(e.target.files))} className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500" />
-      <button onClick={handleMerge} disabled={files.length < 2 || loading} className="bg-green-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 w-full">
+      <input 
+        type="file" 
+        multiple 
+        accept=".pdf" 
+        onChange={(e) => {
+          const newFiles = Array.from(e.target.files);
+          setErrorMsg('');
+          if (validateFiles(newFiles)) setFiles(newFiles);
+        }} 
+        className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-500" 
+        aria-label="Subir PDFs para unir" 
+      />
+      <button 
+        onClick={handleMerge} 
+        disabled={files.length < 2 || loading} 
+        className="bg-red-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 w-full focus:ring-2 focus:ring-red-300"
+        aria-label="Unir PDFs"
+      >
         {loading ? 'Uniendose...' : `Unir ${files.length} PDFs`}
       </button>
+      {errorMsg && <p className="error">{errorMsg}</p>}
+      <div className="ad-banner bg-gray-800 p-4 rounded text-center">Ad Placeholder – Google AdSense</div>
     </div>
   );
 };
 
-// Compress PDF Component
+// Compress PDF (Con Validación Similar)
 const CompressTool = () => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const validateFile = (f) => {
+    if (f.type !== 'application/pdf') {
+      setErrorMsg('Solo PDFs permitidos');
+      return false;
+    }
+    if (f.size > 5 * 1024 * 1024) {
+      setErrorMsg('File >5MB no permitido');
+      return false;
+    }
+    return true;
+  };
 
   const handleCompress = async () => {
+    setErrorMsg('');
     if (!file) return;
     setLoading(true);
     try {
@@ -85,7 +129,7 @@ const CompressTool = () => {
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      alert('Error: ' + err.message);
+      setErrorMsg('Error: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -93,21 +137,58 @@ const CompressTool = () => {
 
   return (
     <div className="space-y-4">
-      <input type="file" accept=".pdf" onChange={(e) => setFile(e.target.files[0])} className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500" />
-      <button onClick={handleCompress} disabled={!file || loading} className="bg-yellow-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 w-full">
+      <input 
+        type="file" 
+        accept=".pdf" 
+        onChange={(e) => {
+          const f = e.target.files[0];
+          setErrorMsg('');
+          if (f && validateFile(f)) setFile(f);
+        }} 
+        className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500" 
+        aria-label="Subir PDF para comprimir" 
+      />
+      <button 
+        onClick={handleCompress} 
+        disabled={!file || loading} 
+        className="bg-yellow-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 w-full focus:ring-2 focus:ring-yellow-300"
+        aria-label="Comprimir PDF"
+      >
         {loading ? 'Comprimiendo...' : 'Comprimir y Descargar'}
       </button>
+      {errorMsg && <p className="error">{errorMsg}</p>}
       {file && <p className="text-sm text-gray-600">Size original: {(file.size / 1024).toFixed(0)} KB</p>}
+      <div className="ad-banner bg-gray-800 p-4 rounded text-center">Ad Placeholder – Google AdSense</div>
     </div>
   );
 };
 
-// IMG a PDF Component (Fix Completo)
+// IMG a PDF (Con Validación)
 const ImgToPdfTool = () => {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const validateFiles = (newFiles) => {
+    if (newFiles.length > 5) {
+      setErrorMsg('Máximo 5 images');
+      return false;
+    }
+    for (let f of newFiles) {
+      if (!['image/jpeg', 'image/png', 'image/gif'].includes(f.type)) {
+        setErrorMsg('Solo JPG/PNG/GIF permitidos');
+        return false;
+      }
+      if (f.size > 5 * 1024 * 1024) {
+        setErrorMsg('Image >5MB no permitido');
+        return false;
+      }
+    }
+    return true;
+  };
 
   const handleConvert = async () => {
+    setErrorMsg('');
     if (files.length === 0) return;
     setLoading(true);
     try {
@@ -149,7 +230,7 @@ const ImgToPdfTool = () => {
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      alert('Error: ' + err.message);
+      setErrorMsg('Error: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -157,47 +238,58 @@ const ImgToPdfTool = () => {
 
   return (
     <div className="space-y-4">
-      <input type="file" multiple accept="image/*" onChange={(e) => setFiles(Array.from(e.target.files))} className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-      <button onClick={handleConvert} disabled={files.length === 0 || loading} className="bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 w-full">
+      <input type="file" multiple accept="image/*" onChange={(e) => {
+        const newFiles = Array.from(e.target.files);
+        setErrorMsg('');
+        if (validateFiles(newFiles)) setFiles(newFiles);
+      }} className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Subir imágenes para convertir" />
+      <button onClick={handleConvert} disabled={files.length === 0 || loading} className="bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 w-full focus:ring-2 focus:ring-indigo-300" aria-label="Convertir a PDF">
         {loading ? 'Convirtiendo...' : `Convertir ${files.length} Imgs a PDF`}
       </button>
-      {files.length > 0 && (
-        <p className="text-sm text-gray-600">
-          Archivos: {files.map(f => f.name).join(', ')}
-        </p>
-      )}
+      {errorMsg && <p className="error">{errorMsg}</p>}
+      <div className="ad-banner bg-gray-800 p-4 rounded text-center">Ad Placeholder – Google AdSense</div>
     </div>
   );
 };
 
-// Word a PDF Component
+// Word a PDF (Con Validación)
 const WordToPdfTool = () => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const validateFile = (f) => {
+    if (f.type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      setErrorMsg('Solo .docx permitidos');
+      return false;
+    }
+    if (f.size > 5 * 1024 * 1024) {
+      setErrorMsg('File >5MB no permitido');
+      return false;
+    }
+    return true;
+  };
 
   const handleConvert = async () => {
+    setErrorMsg('');
     if (!file) return;
     setLoading(true);
     try {
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.convertToHtml({ arrayBuffer });
       const html = result.value;
-
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = html;
       tempDiv.style.width = '612px';
       tempDiv.style.padding = '20px';
       document.body.appendChild(tempDiv);
-
       const canvas = await html2canvas(tempDiv);
       document.body.removeChild(tempDiv);
-
       const pdfDoc = await PDFDocument.create();
       const imgBytes = canvas.toDataURL('image/png');
       const img = await pdfDoc.embedPng(imgBytes);
       const page = pdfDoc.addPage([canvas.width / 2, canvas.height / 2]);
       page.drawImage(img, { x: 0, y: 0, width: canvas.width / 2, height: canvas.height / 2 });
-
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
@@ -207,7 +299,7 @@ const WordToPdfTool = () => {
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      alert('Error: ' + err.message);
+      setErrorMsg('Error: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -215,75 +307,115 @@ const WordToPdfTool = () => {
 
   return (
     <div className="space-y-4">
-      <input type="file" accept=".docx" onChange={(e) => setFile(e.target.files[0])} className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-teal-500" />
-      <button onClick={handleConvert} disabled={!file || loading} className="bg-teal-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 w-full">
+      <input type="file" accept=".docx" onChange={(e) => {
+        const f = e.target.files[0];
+        setErrorMsg('');
+        if (f && validateFile(f)) setFile(f);
+      }} className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-teal-500" aria-label="Subir Word para convertir" />
+      <button onClick={handleConvert} disabled={!file || loading} className="bg-teal-500 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 w-full focus:ring-2 focus:ring-teal-300" aria-label="Convertir Word a PDF">
         {loading ? 'Convirtiendo...' : 'Convertir Word a PDF'}
       </button>
+      {errorMsg && <p className="error">{errorMsg}</p>}
+      <div className="ad-banner bg-gray-800 p-4 rounded text-center">Ad Placeholder – Google AdSense</div>
     </div>
   );
-};
+}
 
-// App Function – Main
+// ========================================
+// MAIN APP – UNE TODO
+// ========================================
 function App() {
   const [tool, setTool] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   const tools = [
-    { id: 'merge', name: 'Unir PDFs', icon: HomeIcon, desc: 'Combina files en segundos', keywords: 'unir combinar pdfs merge' },
-    { id: 'compress', name: 'Comprimir', icon: ScissorsIcon, desc: 'Reduce size hasta 80%', keywords: 'comprimir reducir tamaño peso' },
-    { id: 'img-pdf', name: 'IMG a PDF', icon: DocumentDuplicateIcon, desc: 'Fotos a doc multi-página', keywords: 'imagen foto jpg png convertir pdf' },
-    { id: 'word-pdf', name: 'Word a PDF', icon: DocumentTextIcon, desc: 'Docx a PDF editable', keywords: 'word docx convertir pdf' },
+    { id: 'merge', name: 'Unir PDFs', icon: HomeIcon, desc: 'Combina múltiples archivos' },
+    { id: 'compress', name: 'Comprimir', icon: ScissorsIcon, desc: 'Reduce tamaño hasta 80%' },
+    { id: 'img-pdf', name: 'IMG a PDF', icon: DocumentDuplicateIcon, desc: 'Fotos a documento' },
+    { id: 'word-pdf', name: 'Word a PDF', icon: DocumentTextIcon, desc: 'Docx a PDF editable' },
   ];
 
-  const filteredTools = useMemo(() => {
-    if (!searchQuery) return tools;
-    const query = searchQuery.toLowerCase();
-    return tools.filter(t => 
-      t.name.toLowerCase().includes(query) ||
-      t.desc.toLowerCase().includes(query) ||
-      (t.keywords && t.keywords.toLowerCase().includes(query))
-    );
-  }, [searchQuery, tools]);
+  const filteredTools = tools.filter(t => 
+    t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    t.desc.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const openTool = (id) => setTool(id);
   const closeTool = () => setTool('');
 
   return (
-    <div className="min-h-screen bg-black">
-      <Navbar onSearch={setSearchQuery} />
-      
+    <div className="min-h-screen bg-pulse-dark text-white">
+      {/* Navbar */}
+      <nav className="bg-black/50 backdrop-blur-md shadow-lg fixed w-full z-50 top-0">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-black">
+            PDF<span className="text-pulse-red animate-pulse">Pulse</span>
+          </h1>
+          <input
+            type="text"
+            placeholder="Buscar herramienta..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-pulse-red focus:outline-none w-64"
+          />
+        </div>
+      </nav>
+
+      {/* Hero Banner */}
       {!tool && (
-        <>
-          <Banner />
-          <main id="tools" className="max-w-7xl mx-auto px-4 py-16">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredTools.map((t, i) => (
-                <motion.button
-                  key={t.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  onClick={() => openTool(t.id)}
-                  className="bg-pulse-card p-6 rounded-2xl border border-gray-800 hover:border-pulse-red transition-all group"
-                >
-                  <div className="w-16 h-16 bg-pulse-red/20 rounded-xl mb-4 mx-auto group-hover:bg-pulse-red/40 transition"></div>
-                  <h3 className="text-xl font-bold text-white mb-2">{t.name}</h3>
-                  <p className="text-gray-400 text-sm">{t.desc}</p>
-                </motion.button>
-              ))}
-            </div>
-            {filteredTools.length === 0 && (
-              <p className="text-center text-gray-500 py-12">No se encontraron herramientas...</p>
-            )}
-          </main>
-        </>
+        <section className="pt-24 pb-16 text-center bg-gradient-to-b from-black to-pulse-dark">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-5xl md:text-7xl font-black mb-6"
+          >
+            Transforma tus <span className="text-pulse-red">PDFs</span> al instante
+          </motion.h1>
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            100% Gratis • Sin registro • Todo en tu navegador
+          </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => document.getElementById('tools').scrollIntoView({ behavior: 'smooth' })}
+            className="bg-pulse-red text-white px-8 py-4 rounded-full text-lg font-bold shadow-pulse-red"
+          >
+            Explora Herramientas
+          </motion.button>
+        </section>
       )}
 
+      {/* Tools Grid */}
+      {!tool && (
+        <main id="tools" className="max-w-7xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredTools.map((t, i) => (
+              <motion.button
+                key={t.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                onClick={() => openTool(t.id)}
+                className="bg-gray-900 p-6 rounded-2xl border border-gray-800 hover:border-pulse-red transition-all group text-left"
+              >
+                <t.icon className="w-12 h-12 text-pulse-red mb-4 group-hover:animate-pulse" />
+                <h3 className="text-xl font-bold mb-2">{t.name}</h3>
+                <p className="text-gray-400 text-sm">{t.desc}</p>
+              </motion.button>
+            ))}
+          </div>
+          {filteredTools.length === 0 && (
+            <p className="text-center text-gray-500 py-12">No se encontraron herramientas...</p>
+          )}
+        </main>
+      )}
+
+      {/* Tool Active */}
       {tool && (
         <motion.div
           initial={{ opacity: 0, x: 100 }}
           animate={{ opacity: 1, x: 0 }}
-          className="min-h-screen bg-black pt-20 px-4"
+          className="min-h-screen pt-20 px-4"
         >
           <div className="max-w-4xl mx-auto">
             <button 
@@ -292,16 +424,24 @@ function App() {
             >
               <ArrowLeftIcon className="w-5 h-5" /> Volver
             </button>
-            {tool === 'merge' && <MergeTool />}
-            {tool === 'compress' && <CompressTool />}
-            {tool === 'img-pdf' && <ImgToPdfTool />}
-            {tool === 'word-pdf' && <WordToPdfTool />}
+            <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800">
+              <h2 className="text-3xl font-bold mb-6 text-pulse-red">
+                {tools.find(t => t.id === tool)?.name}
+              </h2>
+              {tool === 'merge' && <MergeTool />}
+              {tool === 'compress' && <CompressTool />}
+              {tool === 'img-pdf' && <ImgToPdfTool />}
+              {tool === 'word-pdf' && <WordToPdfTool />}
+            </div>
           </div>
         </motion.div>
       )}
 
-      <footer className="bg-pulse-dark text-center py-8 text-gray-500 text-sm">
+      {/* Footer */}
+      <footer className="bg-black text-center py-6 text-gray-500 text-sm mt-auto">
         PDFPulse © 2025 – Herramienta independiente. Usa con responsabilidad.
+        <br />
+        <span className="text-pulse-red">Gratis por ahora • Próximamente Premium</span>
       </footer>
     </div>
   );
