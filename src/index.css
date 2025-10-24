@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.tool-card {
+  @apply bg-white text-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300;
+}
+
+.btn-primary {
+  @apply bg-pulse-600 text-white px-6 py-3 rounded font-medium hover:bg-pulse-700 transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 px-6 py-3 rounded font-medium hover:bg-gray-300 transition-colors;
+}
