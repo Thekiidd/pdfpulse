@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import Button from '../common/Button';
 import Loader from '../common/Loader';
+import { Analytics } from "@vercel/analytics/next"
 
 const MergeTool = () => {
   const [files, setFiles] = useState([]);
@@ -26,6 +27,7 @@ const MergeTool = () => {
       a.download = 'merged.pdf';
       a.click();
       URL.revokeObjectURL(url);
+      incrementCounter();
     } catch (err) {
       alert('Error: ' + err.message);
     } finally {

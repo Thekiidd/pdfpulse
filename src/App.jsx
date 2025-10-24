@@ -4,6 +4,7 @@ import { HomeIcon, ScissorsIcon, DocumentDuplicateIcon, DocumentTextIcon, ArrowL
 import { PDFDocument } from 'pdf-lib';
 import mammoth from 'mammoth';
 import html2canvas from 'html2canvas';
+import { Analytics } from "@vercel/analytics/next"
 
 // Merge PDFs
 const MergeTool = () => {
@@ -45,10 +46,12 @@ const MergeTool = () => {
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
+      const now = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
       a.href = url;
-      a.download = 'merged.pdf';
+      a.download = `pdfpulse_merge_${now}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
+      incrementCounter();
     } catch (err) {
       setErrorMsg('Error: ' + err.message);
     } finally {
@@ -124,10 +127,12 @@ const CompressTool = () => {
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
+      const now = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
       a.href = url;
-      a.download = `compressed-${file.name}`;
+      a.download = `pdfpulse_compress_${now}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
+      incrementCounter();
     } catch (err) {
       setErrorMsg('Error: ' + err.message);
     } finally {
@@ -225,10 +230,12 @@ const ImgToPdfTool = () => {
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
+      const now = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
       a.href = url;
-      a.download = 'imgs-to-pdf.pdf';
+      a.download = `pdfpulse_imgages_${now}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
+      incrementCounter();
     } catch (err) {
       setErrorMsg('Error: ' + err.message);
     } finally {
@@ -294,10 +301,12 @@ const WordToPdfTool = () => {
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
+      const now = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
       a.href = url;
-      a.download = 'word-to-pdf.pdf';
+      a.download = `pdfpulse_word_${now}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
+      incrementCounter();
     } catch (err) {
       setErrorMsg('Error: ' + err.message);
     } finally {
@@ -325,6 +334,55 @@ const WordToPdfTool = () => {
 // MAIN APP – UNE TODO
 // ========================================
 function App() {
+  const translations = {
+    es: {
+      title: "Transforma tus PDFs al instante",
+      subtitle: "100% Gratis • Sin registro • Todo en tu navegador",
+      explore: "Explora Herramientas",
+      merge: "Unir PDFs",
+      mergeDesc: "Combina múltiples archivos",
+      compress: "Comprimir",
+      compressDesc: "Reduce tamaño hasta 80%",
+      imgToPdf: "IMG a PDF",
+      imgToPdfDesc: "Fotos a documento",
+      wordToPdf: "Word a PDF",
+      wordToPdfDesc: "Docx a PDF editable",
+      back: "Volver",
+      processed: "PDFs procesados",
+      footer: "Gratis por ahora • Próximamente Premium",
+    },
+    en: {
+      title: "Transform your PDFs instantly",
+      subtitle: "100% Free • No signup • All in your browser",
+      explore: "Explore Tools",
+      merge: "Merge PDFs",
+      mergeDesc: "Combine multiple files",
+      compress: "Compress",
+      compressDesc: "Reduce size up to 80%",
+      imgToPdf: "IMG to PDF",
+      imgToPdfDesc: "Photos to document",
+      wordToPdf: "Word to PDF",
+      wordToPdfDesc: "Docx to editable PDF",
+      back: "Back",
+      processed: "PDFs processed",
+      footer: "Free for now • Premium coming soon",
+    },
+  };
+
+  const [lang, setLang] = useState('es');
+  const t = translations[lang];
+
+  const [totalProcessed, setTotalProcessed] = useState(() => {
+    const saved = localStorage.getItem('pdfpulse_total');
+    return saved ? parseInt(saved) : 0;
+  });
+
+  const incrementCounter = () => {
+    const newTotal = totalProcessed + 1;
+    setTotalProcessed(newTotal);
+    localStorage.setItem('pdfpulse_total', newTotal.toString());
+  };
+
   const [tool, setTool] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -358,6 +416,20 @@ function App() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-pulse-red focus:outline-none w-64"
           />
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setLang('es')}
+            className={`px-3 py-1 rounded ${lang === 'es' ? 'bg-pulse-red text-white' : 'text-gray-400'}`}
+          >
+            ES
+          </button>
+          <button
+            onClick={() => setLang('en')}
+            className={`px-3 py-1 rounded ${lang === 'en' ? 'bg-pulse-red text-white' : 'text-gray-400'}`}
+          >
+            EN
+          </button>
         </div>
       </nav>
 
@@ -439,9 +511,14 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-black text-center py-6 text-gray-500 text-sm mt-auto">
-        PDFPulse © 2025 – Herramienta independiente. Usa con responsabilidad.
-        <br />
-        <span className="text-pulse-red">Gratis por ahora • Próximamente Premium</span>
+        <p>
+          <span className="text-pulse-red font-bold">{totalProcessed.toLocaleString()}</span> PDFs procesados
+        </p>
+        <p className="mt-1">
+          PDFPulse © 2025 – Herramienta independiente. Usa con responsabilidad.
+          <br />
+          <span className="text-pulse-red">Gratis por ahora • Próximamente Premium</span>
+        </p>
       </footer>
     </div>
   );
