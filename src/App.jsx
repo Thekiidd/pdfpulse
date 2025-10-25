@@ -547,7 +547,7 @@ function App() {
           <span className="text-pulse-red">{t.footer}</span>
         </p>
       </footer>
-      
+
       <Analytics />
     </div>
   );
