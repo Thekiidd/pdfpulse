@@ -520,6 +520,8 @@ function App() {
           <span className="text-pulse-red">Gratis por ahora • Próximamente Premium</span>
         </p>
       </footer>
+
+      <Analytics />
     </div>
   );
 }
