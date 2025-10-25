@@ -1,4 +1,4 @@
-import { Analytics } from "@vercel/analytics/react"
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -11,7 +11,7 @@ import {
 import { PDFDocument } from 'pdf-lib';
 import mammoth from 'mammoth';
 import html2canvas from 'html2canvas';
-
+import { Analytics } from "@vercel/analytics/react"
 // ========================================
 // TOOLS
 // ========================================
@@ -547,6 +547,8 @@ function App() {
           <span className="text-pulse-red">{t.footer}</span>
         </p>
       </footer>
+      
+      <Analytics />
     </div>
   );
 }
