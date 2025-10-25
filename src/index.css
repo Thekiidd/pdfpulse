@@ -3,19 +3,23 @@
 @tailwind utilities;
 
 body {
-  background-color: #1a1a1a;  /* Dark */
+  background-color: #1a1a1a;
   color: white;
-  font-family: 'Arial', sans-serif;
-}
-
-.button-focus:focus {
-  outline: none;
-  ring: 2px solid red;
-  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.5);
+  font-family: 'Inter', sans-serif;
 }
 
 .error {
   color: #ff0000;
   font-size: 0.875rem;
   margin-top: 0.5rem;
+}
+
+.ad-banner {
+  background: #333;
+  color: #aaa;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  margin-top: 1rem;
 }

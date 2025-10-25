@@ -10,7 +10,6 @@ module.exports = {
         pulse: {
           dark: '#1a1a1a',
           red: '#ff0000',
-          light: '#f5f5f5',
         },
       },
       animation: {
