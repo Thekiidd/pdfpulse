@@ -89,8 +89,17 @@ const MergeTool = ({ incrementCounter }) => {
         {loading ? 'Uniéndose...' : `Unir ${files.length} PDFs`}
       </button>
       {errorMsg && <p className="error text-red-500">{errorMsg}</p>}
-      <div className="ad-banner bg-gray-800 p-4 rounded text-center text-sm text-gray-400">
-        Anuncio – Google AdSense (728x90)
+      <div className="ad-banner my-6">
+        <ins className="adsbygoogle"
+            style={{ display: 'block' }}
+            data-ad-client="ca-pub-1234567890123456"
+            data-ad-slot="1111111111"
+            data-ad-format="auto"
+            data-full-width-responsive="true">
+        </ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
     </div>
   );
@@ -169,8 +178,16 @@ const CompressTool = ({ incrementCounter }) => {
       </button>
       {errorMsg && <p className="error text-red-500">{errorMsg}</p>}
       {file && <p className="text-sm text-gray-400">Tamaño: {(file.size / 1024).toFixed(0)} KB</p>}
-      <div className="ad-banner bg-gray-800 p-4 rounded text-center text-sm text-gray-400">
-        Anuncio – Google AdSense (300x250)
+      <div className="ad-banner my-6">
+        <ins className="adsbygoogle"
+            style={{ display: 'block' }}
+            data-ad-client="ca-pub-1234567890123456"
+            data-ad-slot="2222222222"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
     </div>
   );
@@ -269,9 +286,17 @@ const ImgToPdfTool = ({ incrementCounter }) => {
         {loading ? 'Convirtiendo...' : `Convertir ${files.length} Imgs`}
       </button>
       {errorMsg && <p className="error text-red-500">{errorMsg}</p>}
-      <div className="ad-banner bg-gray-800 p-4 rounded text-center text-sm text-gray-400">
-        Anuncio – Google AdSense (300x250)
-      </div>
+      <div className="ad-banner my-6">
+  <ins className="adsbygoogle"
+       style={{ display: 'block' }}
+       data-ad-client="ca-pub-1234567890123456"
+       data-ad-slot="2222222222"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>
+       (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
     </div>
   );
 };
@@ -350,9 +375,17 @@ const WordToPdfTool = ({ incrementCounter }) => {
         {loading ? 'Convirtiendo...' : 'Convertir Word a PDF'}
       </button>
       {errorMsg && <p className="error text-red-500">{errorMsg}</p>}
-      <div className="ad-banner bg-gray-800 p-4 rounded text-center text-sm text-gray-400">
-        Anuncio – Google AdSense (300x250)
-      </div>
+      <div className="ad-banner my-6">
+  <ins className="adsbygoogle"
+       style={{ display: 'block' }}
+       data-ad-client="ca-pub-1234567890123456"
+       data-ad-slot="2222222222"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>
+       (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
     </div>
   );
 };
