@@ -1,26 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDFPulse</title>
-  <meta name="google-site-verification" content="du7tDqbkSAZh1GQRmo94NthCQbdwS9MjOGh5-Fgqelw" />
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DMK2VXV134"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    gtag('config', 'G-DMK2VXV134');
-  </script>
-  <script async defer data-domain="pdfpulse.vercel.app" src="https://plausible.io/js/plausible.js"></script>
-  
-</head>
-<body>
-  
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-</body>
-</html> 
+    <!-- TÍTULO Y DESCRIPCIÓN -->
+    <title>PDFPulse: Unir, Comprimir y Convertir PDF Gratis Online</title>
+    <meta name="description" content="Herramienta gratuita para unir PDFs, comprimir archivos, convertir imágenes a PDF y Word a PDF. 100% en navegador, sin registro, rápido y seguro." />
+    <meta name="keywords" content="unir pdf, comprimir pdf, img a pdf, word a pdf, pdf gratis, pdf online, pdf tools, merge pdf, compress pdf" />
+
+    <!-- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:title" content="PDFPulse – Herramientas PDF Gratis" />
+    <meta property="og:description" content="Unir, comprimir y convertir PDFs al instante. 100% gratis, sin registro." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pdfpulse.vercel.app" />
+    <meta property="og:image" content="https://pdfpulse.vercel.app/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es_MX" />
+
+    <!-- TWITTER CARDS -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PDFPulse – Herramientas PDF Gratis" />
+    <meta name="twitter:description" content="Unir, comprimir y convertir PDFs al instante." />
+    <meta name="twitter:image" content="https://pdfpulse.vercel.app/og-image.jpg" />
+
+    <!-- CANONICAL -->
+    <link rel="canonical" href="https://pdfpulse.vercel.app" />
+
+    <!-- GOOGLE VERIFICATION -->
+    <meta name="google-site-verification" content="du7tDqbkSAZh1GQRmo94NthCQbdwS9MjOGh5-Fgqelw" />
+
+    <!-- GOOGLE TAG MANAGER / ANALYTICS -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DMK2VXV134"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-DMK2VXV134');
+    </script>
+
+    <!-- PLAUSIBLE (opcional) -->
+    <script defer data-domain="pdfpulse.vercel.app" src="https://plausible.io/js/plausible.js"></script>
+
+    <!-- FUENTE (opcional) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-pulse-dark text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
