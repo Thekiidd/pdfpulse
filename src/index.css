@@ -1,0 +1,57 @@
+/* src/index.css */
+
+/* 1. IMPORTS SIEMPRE PRIMERO */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+/* 2. TAILWIND DESPUÉS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. TUS ESTILOS PERSONALIZADOS */
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 20px rgba(255, 0, 51, 0.6);
+  }
+  .btn-neon {
+    @apply font-bold rounded-xl transition-all duration-300 backdrop-blur;
+    background: linear-gradient(45deg, #ff0033, #cc0029);
+    box-shadow: 0 0 20px rgba(255, 0, 51, 0.4);
+  }
+  .btn-neon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(255, 0, 51, 0.6);
+  }
+}
+
+/* 4. GLOBALES */
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+/* src/index.css - AÑADE AL FINAL */
+@layer utilities {
+  .slider-neon {
+    @apply appearance-none h-2 bg-gray-700 rounded-lg cursor-pointer;
+  }
+  
+  .slider-neon::-webkit-slider-runnable-track {
+    @apply h-2 bg-gray-700 rounded-lg appearance-none;
+    background: linear-gradient(to right, #ff0033 var(--progress, 0%), #333 var(--progress, 0%), #333 100%);
+  }
+  
+  .slider-neon::-webkit-slider-thumb {
+    @apply appearance-none w-5 h-5 rounded-full bg-neon shadow-neon cursor-pointer;
+    border: none;
+  }
+  
+  .slider-neon::-moz-range-track {
+    @apply h-2 bg-gray-700 rounded-lg;
+    background: linear-gradient(to right, #ff0033 var(--progress, 0%), #333 var(--progress, 0%), #333 100%);
+  }
+  
+  .slider-neon::-moz-range-thumb {
+    @apply w-5 h-5 rounded-full bg-neon border-0 cursor-pointer;
+    box-shadow: 0 0 10px rgba(255, 0, 51, 0.4);
+  }
+}
