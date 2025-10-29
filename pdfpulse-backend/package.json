@@ -11,9 +11,9 @@
     "typeorm": "^0.3.27"
   },
   "scripts": {
-    "build": "nest build",
+    "build": "npx @nestjs/cli build",             
     "start": "node dist/main",
-    "start:dev": "nest start --watch",
+    "start:dev": "npx @nestjs/cli start --watch", 
     "start:prod": "node dist/main"
   },
   "devDependencies": {
