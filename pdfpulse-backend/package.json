@@ -11,12 +11,16 @@
     "typeorm": "^0.3.27"
   },
   "scripts": {
-    "build": "npx @nestjs/cli build",             
+    "build": "npx @nestjs/cli build",
     "start": "node dist/main",
-    "start:dev": "npx @nestjs/cli start --watch", 
+    "start:dev": "npx @nestjs/cli start --watch",
     "start:prod": "node dist/main"
   },
   "devDependencies": {
-    "@types/nodemailer": "^7.0.3"
+    "@nestjs/testing": "^11.1.8",
+    "@types/jest": "^30.0.0",
+    "@types/nodemailer": "^7.0.3",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5"
   }
 }
