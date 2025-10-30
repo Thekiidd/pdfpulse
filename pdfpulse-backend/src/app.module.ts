@@ -86,20 +86,19 @@ import { ProcesadosEntity } from './stats/entities/procesados.entity';
 
     // Serve Vite SPA (solo prod)
     ServeStaticModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
+    imports: [ConfigModule],
+    useFactory: (configService: ConfigService) => {
         const isProd = configService.get('NODE_ENV') === 'production';
-
-        if (!isProd) return []; // No sirve nada en dev
+        if (!isProd) return [];
 
         return [
-          {
-            rootPath: join(__dirname, '..', 'dist'), // Vite build
-            exclude: ['/api/*'], // ✅ Corregido: formato compatible
-          },
+        {
+            rootPath: join(__dirname, '..', 'dist'),
+            exclude: ['/api/(.*)'], // ← CORREGIDO: usa (.*) en lugar de *
+        },
         ];
-      },
-      inject: [ConfigService],
+    },
+    inject: [ConfigService],
     }),
 
     ContactModule,
