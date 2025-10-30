@@ -15,50 +15,48 @@ import { ProcesadosEntity } from './stats/entities/procesados.entity';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     
-    // TypeORM MySQL (con logging detallado y manejo de errores)
     TypeOrmModule.forRootAsync({
     imports: [ConfigModule],
     useFactory: (configService: ConfigService) => {
         const isProd = configService.get('NODE_ENV') === 'production';
 
-        const dbConfig = {
+        const dbConfig: any = {
         type: 'mysql' as const,
-        host: isProd ? configService.get('DB_HOST_PROD') : configService.get('DB_HOST'),
-        port: isProd ? +configService.get('DB_PORT_PROD') : +configService.get('DB_PORT'),
-        username: isProd ? configService.get('DB_USER_PROD') : configService.get('DB_USER'),
-        password: isProd ? configService.get('DB_PASSWORD_PROD') : configService.get('DB_PASSWORD'),
-        database: isProd ? configService.get('DB_NAME_PROD') : configService.get('DB_NAME'),
         entities: [CounterEntity, ProcesadosEntity],
         synchronize: !isProd,
-        logging: true, // ← MUESTRA TODOS LOS QUERIES Y ERRORES EN CONSOLA
-        ssl: isProd ? { rejectUnauthorized: false } : false, // ← SSL para Railway
-        // Timeouts altos para ETIMEDOUT
+        logging: true,
+        retryAttempts: isProd ? 15 : 3,
+        retryDelay: 5000,
         extra: {
             connectionLimit: 10,
-            acquireTimeout: 120000, // 2 minutos
-            timeout: 120000, // 2 minutos
-            reconnect: true, // Reintenta conexión
+            acquireTimeout: 120000,
+            timeout: 120000,
         },
-        retryAttempts: isProd ? 10 : 3,
-        retryDelay: 5000, // 5 segundos entre reintentos
         };
 
-        // LOG DETALLADO EN CONSOLA (para debug en Render)
-        console.log('🚀 DB CONFIG:', {
+        if (isProd) {
+        dbConfig.url = configService.get('DB_URL_PROD');
+        dbConfig.ssl = { rejectUnauthorized: false };
+        } else {
+        dbConfig.host = configService.get('DB_HOST') || 'localhost';
+        dbConfig.port = +configService.get('DB_PORT') || 3306;
+        dbConfig.username = configService.get('DB_USER') || 'root';
+        dbConfig.password = configService.get('DB_PASSWORD') || '';
+        dbConfig.database = configService.get('DB_NAME') || 'pdfpulse_dev';
+        }
+
+        console.log('DB CONEXIÓN:', {
         entorno: isProd ? 'PRODUCCIÓN (Railway)' : 'DESARROLLO (XAMPP)',
-        host: dbConfig.host,
-        puerto: dbConfig.port,
-        base: dbConfig.database,
-        usuario: dbConfig.username?.substring(0, 3) + '...', // Oculta password
-        ssl: dbConfig.ssl,
-        retryAttempts: dbConfig.retryAttempts,
+        host: isProd ? 'turntable.proxy.rlwy.net' : dbConfig.host,
+        puerto: isProd ? 59019 : dbConfig.port,
+        base: isProd ? 'railway' : dbConfig.database,
         });
 
         return dbConfig;
     },
     inject: [ConfigService],
     }),
-    
+
     // Mailer IONOS (corregido)
     MailerModule.forRootAsync({
       imports: [ConfigModule],
