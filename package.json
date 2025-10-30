@@ -7,16 +7,14 @@
   "scripts": {
     "dev": "concurrently \"npm run client\" \"npm run server\" --names \"VITE,EXPRESS\" --prefix-colors \"cyan.bold,magenta.bold\"",
     "client": "vite",
-    
-    "server": "npm run start:dev --prefix ./pdfpulse-backend",  
-    
-    "build": "vite build && npm run build --prefix ./pdfpulse-backend", 
+    "server": "npm run start:dev --prefix ./pdfpulse-backend",
+    "build": "vite build && npm run build --prefix ./pdfpulse-backend",
     "preview": "npm run build && npm start",
-    
-    "start": "node pdfpulse-backend/dist/main.js"               
+    "start": "node pdfpulse-backend/dist/main.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@nestjs/cli": "^11.0.10",
     "@vercel/analytics": "^1.5.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

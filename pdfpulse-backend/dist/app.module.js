@@ -30,7 +30,7 @@ exports.AppModule = AppModule = __decorate([
                 imports: [config_1.ConfigModule],
                 useFactory: (configService) => {
                     const isProd = configService.get('NODE_ENV') === 'production';
-                    return {
+                    const dbConfig = {
                         type: 'mysql',
                         host: isProd ? configService.get('DB_HOST_PROD') : configService.get('DB_HOST'),
                         port: isProd ? +configService.get('DB_PORT_PROD') : +configService.get('DB_PORT'),
@@ -39,8 +39,20 @@ exports.AppModule = AppModule = __decorate([
                         database: isProd ? configService.get('DB_NAME_PROD') : configService.get('DB_NAME'),
                         entities: [counter_entity_1.CounterEntity, procesados_entity_1.ProcesadosEntity],
                         synchronize: !isProd,
+                        logging: true,
                         ssl: isProd ? { rejectUnauthorized: false } : false,
+                        retryAttempts: isProd ? 10 : 3,
+                        retryDelay: 3000,
                     };
+                    console.log('DB CONEXIÓN:', {
+                        entorno: isProd ? 'PRODUCCIÓN (Railway)' : 'DESARROLLO (XAMPP)',
+                        host: dbConfig.host,
+                        puerto: dbConfig.port,
+                        base: dbConfig.database,
+                        usuario: dbConfig.username,
+                        ssl: dbConfig.ssl,
+                    });
+                    return dbConfig;
                 },
                 inject: [config_1.ConfigService],
             }),
