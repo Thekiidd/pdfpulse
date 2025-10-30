@@ -47,8 +47,8 @@ import { ProcesadosEntity } from './stats/entities/procesados.entity';
 
         console.log('DB CONEXIÓN:', {
         entorno: isProd ? 'PRODUCCIÓN (Railway)' : 'DESARROLLO (XAMPP)',
-        host: isProd ? 'turntable.proxy.rlwy.net' : dbConfig.host,
-        puerto: isProd ? 59019 : dbConfig.port,
+        url: isProd ? 'turntable.proxy.rlwy.net:59019' : undefined,
+        host: isProd ? undefined : dbConfig.host,
         base: isProd ? 'railway' : dbConfig.database,
         });
 
