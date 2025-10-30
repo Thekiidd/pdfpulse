@@ -53,7 +53,7 @@ export default function Contact() {
       
       // Obtiene la URL base (en prod será la de Render, en dev será "")
       const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-
+      console.log('URL de fetch final:', API_BASE_URL); 
       // Construye la URL completa
       const FETCH_URL = `${API_BASE_URL}/api/contact`;
       

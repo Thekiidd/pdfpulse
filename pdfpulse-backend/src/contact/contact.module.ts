@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { ContactController } from './contact.controller';
 import { ContactService } from './contact.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+// import { MailerModule } from '@nestjs-modules/mailer'; // <-- ELIMINADO
+// import { ConfigModule } from '@nestjs/config'; // <-- ELIMINADO
 
 @Module({
   imports: [
-    MailerModule,
-    ConfigModule,
+    // MailerModule, // <-- ELIMINADO
+    // ConfigModule, // <-- ELIMINADO
   ],
   controllers: [ContactController],
   providers: [ContactService],

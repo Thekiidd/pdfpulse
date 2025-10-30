@@ -10,7 +10,6 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
-const mailer_1 = require("@nestjs-modules/mailer");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const contact_module_1 = require("./contact/contact.module");
@@ -59,29 +58,6 @@ exports.AppModule = AppModule = __decorate([
                         base: isProd ? 'railway' : dbConfig.database,
                     });
                     return dbConfig;
-                },
-                inject: [config_1.ConfigService],
-            }),
-            mailer_1.MailerModule.forRootAsync({
-                imports: [config_1.ConfigModule],
-                useFactory: async (configService) => {
-                    return {
-                        transport: {
-                            host: 'smtp.ionos.mx',
-                            port: 465,
-                            secure: true,
-                            auth: {
-                                user: configService.get('EMAIL_USER'),
-                                pass: configService.get('EMAIL_PASS'),
-                            },
-                            tls: {
-                                rejectUnauthorized: false,
-                            },
-                        },
-                        defaults: {
-                            from: `"PDFPulse Contacto" <${configService.get('EMAIL_USER')}>`,
-                        },
-                    };
                 },
                 inject: [config_1.ConfigService],
             }),

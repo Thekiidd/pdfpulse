@@ -8,40 +8,59 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var ContactService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContactService = void 0;
 const common_1 = require("@nestjs/common");
-const mailer_1 = require("@nestjs-modules/mailer");
 const config_1 = require("@nestjs/config");
-let ContactService = class ContactService {
-    mailerService;
+const resend_1 = require("resend");
+let ContactService = ContactService_1 = class ContactService {
     configService;
-    constructor(mailerService, configService) {
-        this.mailerService = mailerService;
+    resend;
+    logger = new common_1.Logger(ContactService_1.name);
+    toEmail = 'hola@pdfpulse.online';
+    fromEmail = 'contact@pdfpulse.online';
+    constructor(configService) {
         this.configService = configService;
+        this.resend = new resend_1.Resend(this.configService.get('RESEND_API_KEY'));
     }
     async sendContact(dto) {
-        const recipient = this.configService.get('NODE_ENV') === 'production'
-            ? this.configService.get('EMAIL_USER_PROD')
-            : this.configService.get('EMAIL_USER');
-        await this.mailerService.sendMail({
-            to: recipient,
-            replyTo: dto.email,
-            subject: `Nuevo mensaje de ${dto.name}`,
-            template: './contact',
-            context: {
-                name: dto.name,
-                email: dto.email,
-                message: dto.message,
-            },
-        });
-        return { success: true, message: 'Mensaje enviado' };
+        const { name, email, message } = dto;
+        const subject = `Nuevo Mensaje de Contacto de: ${name}`;
+        const textBody = `
+      Has recibido un nuevo mensaje desde pdfpulse.online:
+      
+      Nombre: ${name}
+      Email: ${email}
+      
+      Mensaje:
+      ${message}
+    `;
+        try {
+            this.logger.log(`Enviando email de ${email} a ${this.toEmail} via Resend...`);
+            const { data, error } = await this.resend.emails.send({
+                from: `PDFPulse Contacto <${this.fromEmail}>`,
+                to: [this.toEmail],
+                subject: subject,
+                text: textBody,
+                replyTo: email,
+            });
+            if (error) {
+                this.logger.error('Error al enviar email con Resend:', error);
+                throw new Error(error.message);
+            }
+            this.logger.log('Email enviado exitosamente:', data.id);
+            return { success: true, message: 'Mensaje enviado' };
+        }
+        catch (error) {
+            this.logger.error('Excepción al enviar email:', error.message);
+            return { success: false, message: `Error del servidor: ${error.message}` };
+        }
     }
 };
 exports.ContactService = ContactService;
-exports.ContactService = ContactService = __decorate([
+exports.ContactService = ContactService = ContactService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [mailer_1.MailerService,
-        config_1.ConfigService])
+    __metadata("design:paramtypes", [config_1.ConfigService])
 ], ContactService);
 //# sourceMappingURL=contact.service.js.map

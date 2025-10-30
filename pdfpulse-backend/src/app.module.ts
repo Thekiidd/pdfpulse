@@ -56,33 +56,6 @@ import { ProcesadosEntity } from './stats/entities/procesados.entity';
       },
       inject: [ConfigService],
     }),
-
-    // Mailer IONOS (corregido)
-    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          transport: {
-            host: 'smtp.ionos.mx', 
-            port: 465,           
-            secure: true,        
-            auth: {
-              user: configService.get('EMAIL_USER'),
-              pass: configService.get('EMAIL_PASS'),
-            },
-            tls: {
-              rejectUnauthorized: false, 
-            },
-          },
-          defaults: {
-            from: `"PDFPulse Contacto" <${configService.get('EMAIL_USER')}>`,
-          },
-        };
-      },
-      inject: [ConfigService],
-    }),
-
-    // Serve Vite SPA (solo prod) <-- BLOQUE ELIMINADO
     
     ContactModule,
     StatsModule,

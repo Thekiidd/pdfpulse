@@ -9,6 +9,7 @@
     "class-validator": "^0.14.2",
     "mysql2": "^3.15.3",
     "nodemailer": "^7.0.10",
+    "resend": "^6.3.0",
     "typeorm": "^0.3.27"
   },
   "scripts": {
