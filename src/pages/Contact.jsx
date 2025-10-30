@@ -24,6 +24,7 @@ export default function Contact() {
 
       // Construye la URL completa
       const FETCH_URL = `${API_BASE_URL}/api/contact`;
+      console.log('URL de fetch final:', FETCH_URL);
       const res = await fetch(FETCH_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

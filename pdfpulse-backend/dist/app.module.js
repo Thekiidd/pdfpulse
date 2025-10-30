@@ -10,8 +10,6 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
-const serve_static_1 = require("@nestjs/serve-static");
-const path_1 = require("path");
 const mailer_1 = require("@nestjs-modules/mailer");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
@@ -85,21 +83,6 @@ exports.AppModule = AppModule = __decorate([
                             from: `"PDFPulse Contacto" <${configService.get('EMAIL_USER')}>`,
                         },
                     };
-                },
-                inject: [config_1.ConfigService],
-            }),
-            serve_static_1.ServeStaticModule.forRootAsync({
-                imports: [config_1.ConfigModule],
-                useFactory: (configService) => {
-                    const isProd = configService.get('NODE_ENV') === 'production';
-                    if (!isProd)
-                        return [];
-                    return [
-                        {
-                            rootPath: (0, path_1.join)(__dirname, '..', 'dist'),
-                            exclude: ['/api/(.*)'],
-                        },
-                    ];
                 },
                 inject: [config_1.ConfigService],
             }),
