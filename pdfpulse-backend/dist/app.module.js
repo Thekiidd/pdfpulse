@@ -32,25 +32,33 @@ exports.AppModule = AppModule = __decorate([
                     const isProd = configService.get('NODE_ENV') === 'production';
                     const dbConfig = {
                         type: 'mysql',
-                        host: isProd ? configService.get('DB_HOST_PROD') : configService.get('DB_HOST'),
-                        port: isProd ? +configService.get('DB_PORT_PROD') : +configService.get('DB_PORT'),
-                        username: isProd ? configService.get('DB_USER_PROD') : configService.get('DB_USER'),
-                        password: isProd ? configService.get('DB_PASSWORD_PROD') : configService.get('DB_PASSWORD'),
-                        database: isProd ? configService.get('DB_NAME_PROD') : configService.get('DB_NAME'),
                         entities: [counter_entity_1.CounterEntity, procesados_entity_1.ProcesadosEntity],
                         synchronize: !isProd,
                         logging: true,
-                        ssl: isProd ? { rejectUnauthorized: false } : false,
-                        retryAttempts: isProd ? 10 : 3,
-                        retryDelay: 3000,
+                        retryAttempts: isProd ? 15 : 3,
+                        retryDelay: 5000,
+                        extra: {
+                            connectionLimit: 10,
+                            acquireTimeout: 120000,
+                            timeout: 120000,
+                        },
                     };
+                    if (isProd) {
+                        dbConfig.url = configService.get('DB_URL_PROD');
+                        dbConfig.ssl = { rejectUnauthorized: false };
+                    }
+                    else {
+                        dbConfig.host = configService.get('DB_HOST') || 'localhost';
+                        dbConfig.port = +configService.get('DB_PORT') || 3306;
+                        dbConfig.username = configService.get('DB_USER') || 'root';
+                        dbConfig.password = configService.get('DB_PASSWORD') || '';
+                        dbConfig.database = configService.get('DB_NAME') || 'pdfpulse_dev';
+                    }
                     console.log('DB CONEXIÓN:', {
                         entorno: isProd ? 'PRODUCCIÓN (Railway)' : 'DESARROLLO (XAMPP)',
-                        host: dbConfig.host,
-                        puerto: dbConfig.port,
-                        base: dbConfig.database,
-                        usuario: dbConfig.username,
-                        ssl: dbConfig.ssl,
+                        url: isProd ? 'turntable.proxy.rlwy.net:59019' : undefined,
+                        host: isProd ? undefined : dbConfig.host,
+                        base: isProd ? 'railway' : dbConfig.database,
                     });
                     return dbConfig;
                 },
@@ -89,7 +97,7 @@ exports.AppModule = AppModule = __decorate([
                     return [
                         {
                             rootPath: (0, path_1.join)(__dirname, '..', 'dist'),
-                            exclude: ['/api/*'],
+                            exclude: ['/api/(.*)'],
                         },
                     ];
                 },
