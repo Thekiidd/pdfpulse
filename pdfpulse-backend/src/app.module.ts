@@ -15,13 +15,13 @@ import { ProcesadosEntity } from './stats/entities/procesados.entity';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     
-    // TypeORM MySQL
+    // TypeORM MySQL (con logging detallado y manejo de errores)
     TypeOrmModule.forRootAsync({
     imports: [ConfigModule],
     useFactory: (configService: ConfigService) => {
         const isProd = configService.get('NODE_ENV') === 'production';
 
-        const dbConfig: any = {
+        const dbConfig = {
         type: 'mysql' as const,
         host: isProd ? configService.get('DB_HOST_PROD') : configService.get('DB_HOST'),
         port: isProd ? +configService.get('DB_PORT_PROD') : +configService.get('DB_PORT'),
@@ -30,27 +30,35 @@ import { ProcesadosEntity } from './stats/entities/procesados.entity';
         database: isProd ? configService.get('DB_NAME_PROD') : configService.get('DB_NAME'),
         entities: [CounterEntity, ProcesadosEntity],
         synchronize: !isProd,
-        logging: true,
-        ssl: isProd ? { rejectUnauthorized: false } : false,
+        logging: true, // ← MUESTRA TODOS LOS QUERIES Y ERRORES EN CONSOLA
+        ssl: isProd ? { rejectUnauthorized: false } : false, // ← SSL para Railway
+        // Timeouts altos para ETIMEDOUT
+        extra: {
+            connectionLimit: 10,
+            acquireTimeout: 120000, // 2 minutos
+            timeout: 120000, // 2 minutos
+            reconnect: true, // Reintenta conexión
+        },
         retryAttempts: isProd ? 10 : 3,
-        retryDelay: 3000,
+        retryDelay: 5000, // 5 segundos entre reintentos
         };
 
-        // LOG DETALLADO
-        console.log('DB CONEXIÓN:', {
+        // LOG DETALLADO EN CONSOLA (para debug en Render)
+        console.log('🚀 DB CONFIG:', {
         entorno: isProd ? 'PRODUCCIÓN (Railway)' : 'DESARROLLO (XAMPP)',
         host: dbConfig.host,
         puerto: dbConfig.port,
         base: dbConfig.database,
-        usuario: dbConfig.username,
+        usuario: dbConfig.username?.substring(0, 3) + '...', // Oculta password
         ssl: dbConfig.ssl,
+        retryAttempts: dbConfig.retryAttempts,
         });
 
         return dbConfig;
     },
     inject: [ConfigService],
     }),
-
+    
     // Mailer IONOS (corregido)
     MailerModule.forRootAsync({
       imports: [ConfigModule],
