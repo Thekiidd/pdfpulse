@@ -65,7 +65,6 @@ exports.AppModule = AppModule = __decorate([
             mailer_1.MailerModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 useFactory: async (configService) => {
-                    const isProd = configService.get('NODE_ENV') === 'production';
                     return {
                         transport: {
                             host: 'smtp.ionos.mx',

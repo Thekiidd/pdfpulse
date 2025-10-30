@@ -61,19 +61,17 @@ import { ProcesadosEntity } from './stats/entities/procesados.entity';
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        const isProd = configService.get('NODE_ENV') === 'production';
-
         return {
           transport: {
-            host: 'smtp.ionos.mx', // Cambia dominio si tu cuenta es .com o .es
-            port: 465,           // ✅ Puerto SSL
-            secure: true,        // ✅ Usa TLS desde el inicio
+            host: 'smtp.ionos.mx', 
+            port: 465,           
+            secure: true,        
             auth: {
               user: configService.get('EMAIL_USER'),
               pass: configService.get('EMAIL_PASS'),
             },
             tls: {
-              rejectUnauthorized: false, // ✅ Evita error "self-signed certificate"
+              rejectUnauthorized: false, 
             },
           },
           defaults: {

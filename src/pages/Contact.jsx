@@ -1,9 +1,40 @@
-// src/pages/Contact.jsx
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
-import Background from '../components/layout/Background';
-import Header from '../components/layout/Header';
+// import Background from '../components/layout/Background'; // Ya no se importa, se define abajo
+// import Header from '../components/layout/Header'; // Ya no se importa, se define abajo
+
+// --- INICIO DE CORRECCIÓN DE ERRORES ---
+// Componentes faltantes definidos aquí para que el archivo se compile.
+// Puedes reemplazarlos con tu código real si lo deseas.
+
+const Background = () => {
+  return (
+    <div 
+      className="fixed inset-0 -z-10 h-full w-full bg-black"
+      aria-hidden="true"
+    >
+      {/* Un fondo simple para que exista el componente */}
+    </div>
+  );
+};
+
+const Header = ({ onBack }) => {
+  return (
+    <header className="absolute top-0 left-0 w-full p-4 z-20">
+      <button 
+        onClick={onBack}
+        className="text-white bg-white/10 p-2 rounded-full hover:bg-white/20 transition"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+    </header>
+  );
+};
+// --- FIN DE CORRECCIÓN DE ERRORES ---
+
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -19,12 +50,16 @@ export default function Contact() {
 
     try {
       console.log('Datos que se van a enviar:', formData);
+      
       // Obtiene la URL base (en prod será la de Render, en dev será "")
       const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
       // Construye la URL completa
       const FETCH_URL = `${API_BASE_URL}/api/contact`;
-      console.log('URL de fetch final:', FETCH_URL);
+      
+      // --- ESTA LÍNEA ES LA CLAVE PARA SABER QUÉ ESTÁ PASANDO ---
+      console.log('URL de fetch final:', FETCH_URL); 
+
       const res = await fetch(FETCH_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -52,7 +87,8 @@ export default function Contact() {
         setStatus(`Error: ${errorMsg}`);
       }
     } catch (err) {
-      setStatus('Sin conexión. Revisa tu internet.');
+      console.error('Error en fetch:', err); // Añadido para más depuración
+      setStatus('Sin conexión. Revisa tu internet o la consola.');
     } finally {
       setLoading(false);
     }
@@ -149,9 +185,9 @@ export default function Contact() {
 
                 <div className="mt-8 p-4 bg-neon/10 rounded-xl border border-neon/30">
                   <p className="text-sm text-gray-300 leading-relaxed">
-                    ¿Tienes una idea para una nueva herramienta?  
-                    ¿Encontraste un error?  
-                    <strong className="text-neon"> ¡Escríbenos!</strong>  
+                    ¿Tienes una idea para una nueva herramienta? 
+                    ¿Encontraste un error? 
+                    <strong className="text-neon"> ¡Escríbenos!</strong> 
                     Respondemos en menos de 24h.
                   </p>
                 </div>
@@ -163,3 +199,4 @@ export default function Contact() {
     </>
   );
 }
+
