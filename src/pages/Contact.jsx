@@ -19,8 +19,12 @@ export default function Contact() {
 
     try {
       console.log('Datos que se van a enviar:', formData);
+      // Obtiene la URL base (en prod será la de Render, en dev será "")
+      const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
-      const res = await fetch('/api/contact', {
+      // Construye la URL completa
+      const FETCH_URL = `${API_BASE_URL}/api/contact`;
+      const res = await fetch(FETCH_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
