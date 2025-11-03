@@ -12,27 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const mailer_1 = require("@nestjs-modules/mailer");
 let AppController = class AppController {
     configService;
-    mailerService;
-    constructor(configService, mailerService) {
+    constructor(configService) {
         this.configService = configService;
-        this.mailerService = mailerService;
     }
     getTest() {
         return {
             message: 'PDFPulse NestJS API ON ✅',
             env: this.configService.get('NODE_ENV'),
         };
-    }
-    async testSmtp() {
-        await this.mailerService.sendMail({
-            to: this.configService.get('EMAIL_USER'),
-            subject: 'Test SMTP NestJS ✅',
-            text: '¡SMTP funciona!',
-        });
-        return { success: true, message: 'SMTP OK' };
     }
 };
 exports.AppController = AppController;
@@ -42,15 +31,8 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getTest", null);
-__decorate([
-    (0, common_1.Get)('test-smtp'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "testSmtp", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [config_1.ConfigService,
-        mailer_1.MailerService])
+    __metadata("design:paramtypes", [config_1.ConfigService])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map
