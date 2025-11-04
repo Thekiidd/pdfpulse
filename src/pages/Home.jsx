@@ -9,7 +9,7 @@ import ToolsGrid from '../components/layout/ToolsGrid';
 import WhyChoose from '../components/layout/WhyChoose';
 import CTA from '../components/layout/CTA';
 import Footer from '../components/layout/Footer';
-
+import AdSenseLoader from '../components/AdSenseLoader';
 // === TODAS LAS HERRAMIENTAS ===
 import MergeTool from '../components/tools/MergeTool';
 import CompressTool from '../components/tools/CompressTool';
@@ -41,7 +41,6 @@ export default function Home() {
   const [activeTool, setActiveTool] = useState(null);
 
   const tools = [
-    // === GRATIS + EXISTENTES ===
     { id: 'merge', name: "Unir PDFs", desc: "Combina múltiples archivos", icon: DocumentDuplicateIcon, component: <MergeTool incrementCounter={increment} /> },
     { id: 'compress', name: "Comprimir PDF", desc: "Reduce hasta 80% (API)", icon: ScissorsIcon, component: <CompressTool incrementCounter={increment} /> },
     { id: 'img-pdf', name: "IMG a PDF", desc: "Fotos a documento", icon: PhotoIcon, component: <ImgToPdfTool incrementCounter={increment} /> },
@@ -73,6 +72,8 @@ export default function Home() {
 
   return (
     <>
+      <AdSenseLoader />
+
       <Background />
       <div className="relative z-10 min-h-screen">
         {activeTool ? (
