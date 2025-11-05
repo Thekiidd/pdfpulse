@@ -67,7 +67,6 @@ export default function CreateProfile() {
     setFormLoading(false);
   };
 
-  const t = translations['es'];
   const count = 0;
 
   if (loading || !currentUser || userData) {

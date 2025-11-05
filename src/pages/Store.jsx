@@ -6,12 +6,10 @@ import { TicketIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 const Header = () => <header className="p-4 bg-black/50 text-white text-center">Mock Header</header>;
 const Footer = ({ count }) => <footer className="p-4 bg-black/50 text-gray-500 text-center">Mock Footer</footer>;
 const Background = () => <div className="fixed inset-0 bg-gray-900 -z-10"></div>;
-const translations = { es: {} }; 
 // --- FIN DE MOCKS ---
 
 // Componente de la Tienda
 export default function Store() {
-  const t = translations['es'];
   const count = 0;
 
   return (
