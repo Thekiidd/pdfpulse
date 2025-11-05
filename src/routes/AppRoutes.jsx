@@ -4,12 +4,13 @@ import Contact from '../pages/Contact';
 import About from '../pages/About';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import Blog from '../pages/Blog';
-
-// === Importa las nuevas páginas de autenticación ===
-import Login from '../pages/Login';
-import Register from '../pages/Register';
 import CreateProfile from '../pages/CreateProfile';
-// (Crearemos estos archivos en el siguiente paso)
+import AuthPage from '../pages/AuthPage';
+
+// --- 1. Importa el guardián y las nuevas páginas ---
+import ProtectedRoute from '../components/common/ProtectedRoute';
+import Dashboard from '../pages/Dashboard';
+import Store from '../pages/Store'; // (Crearemos estos archivos ahora)
 
 export default function AppRoutes() {
   return (
@@ -20,14 +21,30 @@ export default function AppRoutes() {
       <Route path="/acerca-de" element={<About />} />
       <Route path="/politica-de-privacidad" element={<PrivacyPolicy />} />
       <Route path="/blog" element={<Blog />} />
-
-      {/* === Rutas de Autenticación === */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/registro" element={<Register />} />
-
-      {/* === Rutas Protegidas (Ejemplo Básico) === */}
-      {/* Más adelante haremos esto más robusto con un 'ProtectedRoute' */}
+      <Route path="/auth" element={<AuthPage />} />
+      
+      {/* Ruta semi-protegida: 
+        CreateProfile maneja su propia lógica de redirección
+      */}
       <Route path="/crear-perfil" element={<CreateProfile />} />
+
+      {/* --- 2. Rutas Protegidas (NUEVAS) --- */}
+      <Route 
+        path="/dashboard" 
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/comprar-tokens" 
+        element={
+          <ProtectedRoute>
+            <Store />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Ruta comodín */}
       <Route path="*" element={<Home />} />
