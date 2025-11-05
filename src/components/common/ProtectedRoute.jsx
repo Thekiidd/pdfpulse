@@ -7,7 +7,6 @@ export default function ProtectedRoute({ children }) {
   const location = useLocation();
 
   if (loading) {
-    // Muestra un spinner mientras se verifica la autenticación
     return (
       <div className="bg-black min-h-screen flex items-center justify-center text-neon">
         Cargando sesión...

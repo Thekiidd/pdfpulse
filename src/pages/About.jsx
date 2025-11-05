@@ -3,12 +3,9 @@ import { Link } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Background from '../components/layout/Background';
-import { translations } from '../utils/translations'; // Asumo que tienes 'es' aquí
 import { SparklesIcon, UserGroupIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 
 export default function About() {
-  // Ajusta esto si necesitas el contador real
-  const t = translations['es']; 
   const count = 0; 
 
   return (
@@ -75,7 +72,7 @@ export default function About() {
           </div>
         </main>
         
-        <Footer t={t} count={count} />
+        <Footer count={count} />
       </div>
     </>
   );

@@ -9,21 +9,20 @@ import {
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // Importamos el hook
+import { useAuth } from '../../context/AuthContext'; 
 
 export default function Header({ onBack }) {
-  const { currentUser, userData, logout } = useAuth(); // Obtenemos el estado del usuario
+  const { currentUser, userData, logout } = useAuth(); 
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-xl border-b border-neon/20">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         
-        {/* === LOGO + BOTÓN ATRÁS (Sin cambios) === */}
         <div className="flex items-center gap-3">
           {onBack && (
             <button
               onClick={onBack}
-              className="p-2 rounded-lg hover:bg-neon/10 transition"
+              className="p-2 hover:bg-neon/10 transition" // rounded-lg quitado
             >
               <ArrowLeftIcon className="w-6 h-6 text-neon" />
             </button>
@@ -45,11 +44,8 @@ export default function Header({ onBack }) {
           </Link>
         </div>
 
-        {/* === BOTONES DERECHA (¡Ahora dinámico!) === */}
         <div className="flex items-center gap-4 md:gap-6">
           
-          {/* --- Enlaces Públicos (Blog, Acerca de, Contacto) --- */}
-          {/* Ocultos en móvil para dar espacio al menú de usuario */}
           <nav className="hidden md:flex items-center gap-4 md:gap-6">
             <Link 
               to="/blog" 
@@ -71,21 +67,17 @@ export default function Header({ onBack }) {
             </Link>
           </nav>
 
-          {/* --- Bloque de Autenticación (La Magia) --- */}
           <div className="flex items-center">
             {currentUser && userData ? (
-              // 1. ESTADO: Logueado y con perfil
               <UserMenu user={userData} onLogout={logout} />
             ) : !currentUser ? (
-              // 2. ESTADO: No Logueado
               <Link
                 to="/auth"
-                className="btn-neon text-sm px-5 py-2"
+                className="btn-neon text-sm px-5 py-2" // (btn-neon no tiene radius)
               >
                 Iniciar Sesión
               </Link>
             ) : (
-              // 3. ESTADO: Logueado pero sin perfil (en /crear-perfil)
               <Link
                 to="/crear-perfil"
                 className="btn-neon text-sm px-5 py-2 animate-pulse"
@@ -110,7 +102,6 @@ function UserMenu({ user, onLogout }) {
   const photoURL = user.photoURL;
   const tokens = user.tokens?.remaining;
 
-  // --- Cierra el menú si se hace clic fuera ---
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -121,7 +112,6 @@ function UserMenu({ user, onLogout }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuRef]);
 
-  // --- Maneja el Logout y redirige ---
   const handleLogout = async () => {
     setIsOpen(false);
     await onLogout();
@@ -130,21 +120,23 @@ function UserMenu({ user, onLogout }) {
 
   return (
     <div className="relative" ref={menuRef}>
-      {/* --- Botón que abre el menú --- */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 pl-3 pr-2 py-1 bg-white/5 border border-neon/30 rounded-full text-white text-sm font-medium hover:bg-neon/10 transition"
+        className="flex items-center gap-2 pl-3 pr-2 py-1 bg-white/5 border border-neon/30 text-white text-sm font-medium hover:bg-neon/10 transition" // rounded-full quitado
       >
-        {/* Foto de perfil o icono */}
-        <div className="w-7 h-7 rounded-full overflow-hidden bg-black/30">
+        <div className="w-7 h-7 overflow-hidden bg-black/30"> {/* rounded-full quitado */}
           {photoURL ? (
-            <img src={photoURL} alt={displayName} className="w-full h-full object-cover" />
+            <img 
+              src={photoURL} 
+              alt={displayName} 
+              className="w-full h-full object-cover" 
+              onError={(e) => e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${displayName}`}
+            />
           ) : (
             <UserCircleIcon className="w-full h-full text-neon/60" />
           )}
         </div>
         
-        {/* Tokens (Visible en pantallas más grandes) */}
         <div className="hidden sm:flex items-center gap-1 text-neon">
           <TicketIcon className="w-4 h-4" />
           <span className="font-bold">{tokens}</span>
@@ -153,7 +145,6 @@ function UserMenu({ user, onLogout }) {
         <ChevronDownIcon className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* --- Panel del Menú Desplegable --- */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -161,13 +152,12 @@ function UserMenu({ user, onLogout }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute top-full right-0 mt-2 w-64 bg-black/80 backdrop-blur-lg border border-neon/30 rounded-2xl shadow-neon-lg overflow-hidden z-50"
+            className="absolute top-full right-0 mt-2 w-64 bg-black/80 backdrop-blur-lg border border-neon/30 shadow-neon-lg overflow-hidden z-50" // rounded-2xl quitado
           >
             <div className="p-4 border-b border-neon/20">
               <p className="text-sm font-semibold text-white truncate">{displayName}</p>
               <p className="text-xs text-gray-400 truncate">{user.email}</p>
               
-              {/* Tokens (Visible en móvil aquí) */}
               <div className="sm:hidden flex items-center gap-1 text-neon mt-2">
                 <TicketIcon className="w-4 h-4" />
                 <span className="font-bold">{tokens} Tokens</span>
@@ -176,22 +166,22 @@ function UserMenu({ user, onLogout }) {
 
             <nav className="p-2">
               <Link
-                to="/dashboard" // (Página futura)
+                to="/dashboard"
                 onClick={() => setIsOpen(false)}
-                className="block px-3 py-2 text-sm text-gray-300 hover:bg-neon/10 hover:text-neon rounded-lg transition-colors"
+                className="block px-3 py-2 text-sm text-gray-300 hover:bg-neon/10 hover:text-neon transition-colors" // rounded-lg quitado
               >
-                Mi Perfil
+                Mi Dashboard
               </Link>
               <Link
-                to="/comprar-tokens" // (Página futura)
+                to="/comprar-tokens"
                 onClick={() => setIsOpen(false)}
-                className="block px-3 py-2 text-sm text-gray-300 hover:bg-neon/10 hover:text-neon rounded-lg transition-colors"
+                className="block px-3 py-2 text-sm text-gray-300 hover:bg-neon/10 hover:text-neon transition-colors" // rounded-lg quitado
               >
                 Comprar Tokens
               </Link>
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-lg transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors" // rounded-lg quitado
               >
                 <ArrowRightOnRectangleIcon className="w-5 h-5" />
                 Cerrar Sesión

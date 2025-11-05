@@ -13,33 +13,31 @@ import {
   serverTimestamp,
   updateDoc
 } from 'firebase/firestore';
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from 'firebase/storage'; // <-- ¡NUEVO!
-import { auth, googleProvider, db, storage } from '../firebase'; // <-- ¡NUEVO!
+import { auth, googleProvider, db } from '../firebase';
 
+// 1. Creamos y EXPORTAMOS el Contexto
 export const AuthContext = createContext();
 
+// 2. Hook 'useAuth'
 // eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   return React.useContext(AuthContext);
 }
 
+// 3. Proveedor
 // eslint-disable-next-line react-refresh/only-export-components
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null); 
   const [userData, setUserData] = useState(null);     
   const [loading, setLoading] = useState(true);
 
-  // ... (Las funciones signInWithGoogle, registerWithEmail, loginWithEmail, logout no cambian) ...
+  // --- Funciones de Login/Registro ---
   const signInWithGoogle = () => { return signInWithPopup(auth, googleProvider); };
   const registerWithEmail = (e, p) => { return createUserWithEmailAndPassword(auth, e, p); };
   const loginWithEmail = (e, p) => { return signInWithEmailAndPassword(auth, e, p); };
   const logout = () => { setUserData(null); return signOut(auth); };
 
-  // --- Función para CREAR PERFIL (Sigue igual) ---
+  // --- Función para CREAR PERFIL (con Lógica de Avatar) ---
   const createUserDocument = async (user, additionalData) => {
     if (!user) return;
     const userRef = doc(db, 'users', user.uid);
@@ -48,10 +46,22 @@ export function AuthProvider({ children }) {
       setUserData(docSnap.data());
       return;
     }
+
+    // --- Lógica de Avatar ---
+    let photoURL = user.photoURL || null;
+    if (!photoURL) {
+      // Generamos un avatar con sus iniciales o email
+      const seed = additionalData.displayName || user.email;
+      photoURL = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}`;
+    }
+    // --- Fin de la lógica de avatar ---
+
     const userDataBase = {
-      // ... (toda la estructura de datos que definimos) ...
-      uid: user.uid, email: user.email, photoURL: user.photoURL || null,
-      createdAt: serverTimestamp(), lastLogin: serverTimestamp(),
+      uid: user.uid,
+      email: user.email,
+      photoURL: photoURL, // Usamos la URL de Google o la generada
+      createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp(),
       tokens: { remaining: 150, lastRefill: serverTimestamp() },
       subscription: { plan: "free", status: "active", stripeCustomerId: null },
       personalInfo: {
@@ -71,17 +81,14 @@ export function AuthProvider({ children }) {
     } catch (error) { console.error("Error al crear el documento:", error); }
   };
 
-  // --- Función para ACTUALIZAR DATOS DE TEXTO ---
+  // --- Función para ACTUALIZAR DATOS DE TEXTO (Ahora incluye photoURL) ---
   const updateUserProfile = async (uid, dataToUpdate) => {
     if (!uid) return;
     const userRef = doc(db, 'users', uid);
     try {
-      // 1. Actualiza la base de datos
       await updateDoc(userRef, dataToUpdate);
-      // 2. Vuelve a leer los datos frescos de la BD
-      const docSnap = await getDoc(userRef);
+      const docSnap = await getDoc(userRef); // Vuelve a leer los datos
       if (docSnap.exists()) {
-        // 3. Actualiza el estado local para que la UI reaccione
         setUserData(docSnap.data()); 
       }
       console.log("Perfil actualizado exitosamente");
@@ -91,35 +98,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // --- ¡NUEVA FUNCIÓN PARA SUBIR IMAGEN! ---
-  const uploadProfileImage = async (file, uid) => {
-    if (!file || !uid) return;
-
-    // 1. Define la ruta en Firebase Storage
-    const storageRef = ref(storage, `profileImages/${uid}/${file.name}`);
-    
-    try {
-      // 2. Sube el archivo
-      const snapshot = await uploadBytes(storageRef, file);
-      
-      // 3. Obtiene la URL pública del archivo subido
-      const downloadURL = await getDownloadURL(snapshot.ref);
-
-      // 4. Actualiza el campo 'photoURL' en Firestore
-      await updateUserProfile(uid, {
-        photoURL: downloadURL
-      });
-
-      console.log("Imagen subida y perfil actualizado!");
-      return downloadURL; // Devuelve la URL por si la UI la necesita
-
-    } catch (error) {
-      console.error("Error al subir la imagen:", error);
-      throw error;
-    }
-  };
-
-  // 4. Listener de Autenticación (Sigue igual)
+  // 4. Listener de Autenticación
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user); 
@@ -140,7 +119,7 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  // 5. Valores compartidos (¡Añadimos las nuevas funciones!)
+  // 5. Valores compartidos
   const value = {
     currentUser,
     userData,
@@ -150,8 +129,7 @@ export function AuthProvider({ children }) {
     loginWithEmail,
     logout,
     createUserDocument,
-    updateUserProfile,
-    uploadProfileImage // <-- ¡NUEVO!
+    updateUserProfile 
   };
 
   return (
