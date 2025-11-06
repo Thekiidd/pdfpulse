@@ -3,77 +3,150 @@ import { Link } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Background from '../components/layout/Background';
-import { SparklesIcon, UserGroupIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
+import { 
+  RocketLaunchIcon, 
+  ShieldCheckIcon, 
+  SparklesIcon, 
+  CodeBracketIcon, 
+  UserIcon,
+  GlobeAltIcon
+} from '@heroicons/react/24/outline';
+
+// Este componente ya no necesita importaciones de translations porque usa texto fijo
+// Asumo que tu Footer sí lo necesita, por eso mantenemos count.
 
 export default function About() {
-  const count = 0; 
+  const count = 0; 
 
-  return (
-    <>
-      <Background />
-      <div className="relative z-10 min-h-screen flex flex-col">
-        <Header onBack={null} />
-        
-        <main className="flex-grow max-w-4xl mx-auto px-4 py-16 text-white">
-          <div className="bg-white/5 backdrop-blur-xl p-8 md:p-12 rounded-3xl border border-neon/30 shadow-neon-lg">
+  return (
+    <>
+      <Background />
+      <div className="relative z-10 min-h-screen flex flex-col">
+        <Header onBack={null} />
+        
+        <main className="flex-grow max-w-5xl mx-auto px-4 py-24 text-white">
+          
+          {/* --- BLOQUE PRINCIPAL: MISIÓN Y VISIÓN --- */}
+          <div className="bg-white/5 backdrop-blur-xl p-8 md:p-12 border border-neon/30 shadow-neon-lg mb-16">
             
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-neon text-glow">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-neon text-glow">
               Acerca de PDFPulse
             </h1>
             
             <p className="text-lg md:text-xl text-gray-200 mb-8">
-              PDFPulse nació de una idea simple: las herramientas para PDF y archivos no deberían ser complicadas ni costosas. 
-              Nuestra misión es ofrecer un conjunto de utilidades rápidas, seguras y gratuitas que funcionen 100% en tu navegador.
+              PDFPulse nació de la frustración por las herramientas de pago lentas y complicadas. 
+              Nuestra misión es clara: ofrecer un conjunto de utilidades rápidas, seguras y accesibles 
+              para que el manejo de documentos sea una ventaja, no un obstáculo.
             </p>
 
             <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-4 flex items-center text-gray-100">
-                  <RocketLaunchIcon className="w-7 h-7 mr-3 text-neon" />
-                  Nuestra Misión
-                </h2>
-                <p className="text-gray-300">
-                  Queremos democratizar la edición de documentos. Ya sea que necesites unir un trabajo para la universidad, 
-                  comprimir un informe para enviarlo por correo o convertir tus fotos en un solo documento, 
-                  PDFPulse está aquí para ayudarte sin necesidad de registros ni descargas.
-                </p>
-              </div>
+              <MissionCard
+                icon={RocketLaunchIcon}
+                title="Visión Tecnológica"
+                text="Democratizar la edición de documentos usando tecnología del lado del cliente (en tu navegador) para tareas simples, y un backend potente y seguro (con NestJS) para el procesamiento avanzado de tokens."
+              />
 
-              <div>
-                <h2 className="text-2xl font-bold mb-4 flex items-center text-gray-100">
-                  <SparklesIcon className="w-7 h-7 mr-3 text-neon" />
-                  ¿Por qué PDFPulse?
-                </h2>
-                <ul className="list-disc list-inside space-y-2 text-gray-300">
-                  <li><strong>Gratis y Anónimo:</strong> No requerimos registro. Tu privacidad es primordial.</li>
-                  <li><strong>Basado en Navegador:</strong> La mayoría de herramientas procesan tus archivos localmente.</li>
-                  <li><strong>Rápido y Eficiente:</strong> Creado con tecnología moderna para ser increíblemente rápido.</li>
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold mb-4 flex items-center text-gray-100">
-                  <UserGroupIcon className="w-7 h-7 mr-3 text-neon" />
-                  El Futuro
-                </h2>
-                <p className="text-gray-300">
-                  Esto es solo el comienzo. Planeamos expandirnos a más herramientas de imagen, 
-                  audio y todo tipo de archivos, siempre manteniendo la simplicidad y la seguridad como pilares.
-                </p>
-                <p className="mt-4">
-                  ¿Tienes ideas o necesitas ayuda? 
-                  <Link to="/contacto" className="text-neon font-bold hover:underline ml-1">
-                    ¡Contáctanos!
-                  </Link>
-                </p>
-              </div>
+              <MissionCard
+                icon={GlobeAltIcon}
+                title="Compromiso con el Usuario"
+                text="Tu privacidad es primordial. Procesamos tus archivos con la máxima seguridad. Nos enfocamos en ofrecer una experiencia de usuario limpia, sin anuncios molestos en zonas clave y con una separación justa entre funciones gratuitas y de token."
+              />
             </div>
 
           </div>
+
+          {/* --- SECCIÓN DE VALORES (3 Columnas, más visual) --- */}
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white text-center">
+            Nuestros Pilares
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <ValueCard
+              icon={SparklesIcon}
+              title="Simplicidad Extrema"
+              description="Diseñado para un solo clic. Accede a la herramienta que necesitas sin pasar por menús complejos, registros obligatorios o configuraciones innecesarias."
+            />
+            <ValueCard
+              icon={ShieldCheckIcon}
+              title="Seguridad por Diseño"
+              description="La mayoría de las funciones operan localmente en tu dispositivo. Los archivos enviados a nuestro servidor se eliminan automáticamente tras el procesamiento."
+            />
+            <ValueCard
+              icon={CodeBracketIcon}
+              title="Transparencia"
+              description="Nuestra arquitectura es clara: herramientas gratis (lado del cliente), herramientas de token (lado del servidor con backend NestJS). Siempre sabrás cómo se procesan tus datos."
+            />
+          </div>
+
+          {/* --- SECCIÓN DE EQUIPO (Placeholder) --- */}
+          <div className="text-center mt-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-neon text-glow">
+              Conoce a los Fundadores
+            </h2>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-10">
+              Somos ingenieros de software y diseñadores apasionados por la tecnología, creando un producto que usaríamos nosotros mismos.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <TeamCard
+                icon={UserIcon}
+                name="Luis Batista"
+                title="Fundador & Desarrollador Principal"
+                email="contacto@pdfpulse.online"
+              />
+              <TeamCard
+                icon={UserIcon}
+                name="[Nombre del Co-Fundador/Diseñador]"
+                title="Diseño UX/UI & Estrategia de Producto"
+                email="contacto@pdfpulse.online"
+              />
+            </div>
+          </div>
         </main>
         
-        <Footer count={count} />
+        <Footer count={count} />
+      </div>
+    </>
+  );
+}
+
+// --- Sub-componente para Misión (Nuevo) ---
+function MissionCard({ icon: Icon, title, text }) {
+  return (
+    <div className="flex items-start gap-4 p-4 bg-black/30 border border-neon/20">
+      <Icon className="w-8 h-8 text-neon flex-shrink-0 mt-1" />
+      <div>
+        <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+        <p className="text-gray-300 text-md">{text}</p>
       </div>
-    </>
+    </div>
+  );
+}
+
+// --- Sub-componente para Tarjeta de Valor (Recto) ---
+function ValueCard({ icon: Icon, title, description }) {
+  return (
+    <div className="bg-white/5 backdrop-blur-xl p-8 border border-neon/30 shadow-neon-lg text-center">
+      <div className="w-16 h-16 bg-neon/10 border-2 border-neon/30 text-neon flex items-center justify-center mx-auto mb-6">
+        <Icon className="w-8 h-8" />
+      </div>
+      <h3 className="text-2xl font-bold text-white mb-3">{title}</h3>
+      <p className="text-gray-300">{description}</p>
+    </div>
+  );
+}
+
+// --- Sub-componente para Tarjeta de Equipo (Recto) ---
+function TeamCard({ icon: Icon, name, title, email }) {
+  return (
+    <div className="bg-white/5 backdrop-blur-xl p-6 border border-neon/20 text-center">
+      <div className="w-24 h-24 bg-black/30 text-gray-500 flex items-center justify-center mx-auto mb-4">
+        <Icon className="w-12 h-12" />
+      </div>
+      <h4 className="text-lg font-bold text-white">{name}</h4>
+      <p className="text-sm text-neon">{title}</p>
+      <a href={`mailto:${email}`} className="text-xs text-gray-400 hover:text-white mt-1 block">
+        {email}
+      </a>
+    </div>
   );
 }

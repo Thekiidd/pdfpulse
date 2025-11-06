@@ -1,46 +1,20 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
-// import Background from '../components/layout/Background'; // Ya no se importa, se define abajo
-// import Header from '../components/layout/Header'; // Ya no se importa, se define abajo
-
-// --- INICIO DE CORRECCIÓN DE ERRORES ---
-// Componentes faltantes definidos aquí para que el archivo se compile.
-// Puedes reemplazarlos con tu código real si lo deseas.
-
-const Background = () => {
-  return (
-    <div 
-      className="fixed inset-0 -z-10 h-full w-full bg-black"
-      aria-hidden="true"
-    >
-      {/* Un fondo simple para que exista el componente */}
-    </div>
-  );
-};
-
-const Header = ({ onBack }) => {
-  return (
-    <header className="absolute top-0 left-0 w-full p-4 z-20">
-      <button 
-        onClick={onBack}
-        className="text-white bg-white/10 p-2 rounded-full hover:bg-white/20 transition"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-      </button>
-    </header>
-  );
-};
-// --- FIN DE CORRECCIÓN DE ERRORES ---
-
+import Background from '../components/layout/Background';
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Asumo que el Footer necesita esto
+  const t = { contact_phone: '+54 11 1234-5678', contact_address: 'Buenos Aires, Argentina' }; // Placeholder de traducciones
+  const count = 0;
+
+  // NOTA: Esta función asume que tienes un backend (NestJS) listo para recibir el POST en /api/contact.
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
@@ -49,17 +23,9 @@ export default function Contact() {
     setStatus('Enviando...');
 
     try {
-      console.log('Datos que se van a enviar:', formData);
-      
-      // Obtiene la URL base (en prod será la de Render, en dev será "")
       const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-      console.log('URL de fetch final:', API_BASE_URL); 
-      // Construye la URL completa
       const FETCH_URL = `${API_BASE_URL}/api/contact`;
       
-      // --- ESTA LÍNEA ES LA CLAVE PARA SABER QUÉ ESTÁ PASANDO ---
-      console.log('URL de fetch final:', FETCH_URL); 
-
       const res = await fetch(FETCH_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,27 +33,25 @@ export default function Contact() {
       });
 
       const text = await res.text();
-      console.log('Respuesta cruda:', text);
-
       let data;
+
       try {
         data = JSON.parse(text);
       } catch (err) {
         setStatus('Error del servidor. Intenta más tarde.');
+        setLoading(false);
         return;
       }
 
-      if (data.success) {
+      if (res.ok && data.success) {
         setStatus('¡Mensaje enviado! Te respondemos en menos de 24h');
         setFormData({ name: '', email: '', message: '' });
       } else {
-        const errorMsg = data.details
-          ? `${data.error}: ${data.details.split('\n')[0]}`
-          : data.error;
+        const errorMsg = data.error || (data.details ? data.details.split('\n')[0] : 'Error desconocido');
         setStatus(`Error: ${errorMsg}`);
       }
     } catch (err) {
-      console.error('Error en fetch:', err); // Añadido para más depuración
+      console.error('Error en fetch:', err); 
       setStatus('Sin conexión. Revisa tu internet o la consola.');
     } finally {
       setLoading(false);
@@ -97,13 +61,13 @@ export default function Contact() {
   return (
     <>
       <Background />
-      <div className="relative z-10 min-h-screen">
+      <div className="relative z-10 min-h-screen flex flex-col">
         <Header onBack={() => window.history.back()} />
-        <main className="max-w-4xl mx-auto px-4 py-16 mt-16">
+        <main className="flex-grow max-w-4xl mx-auto px-4 py-16 mt-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-neon/30 shadow-neon-lg"
+            className="bg-white/5 backdrop-blur-xl p-8 border border-neon/30 shadow-neon-lg" // Sin rounded-3xl
           >
             <h1 className="text-4xl md:text-5xl font-black text-center text-neon text-glow mb-8">
               Contáctanos
@@ -118,7 +82,7 @@ export default function Contact() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   disabled={loading}
-                  className="w-full px-4 py-3 bg-white/10 border border-neon/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon disabled:opacity-70"
+                  className="w-full px-4 py-3 bg-white/10 border border-neon/30 text-white placeholder-gray-400 focus:outline-none focus:border-neon disabled:opacity-70" // Sin rounded-xl
                 />
                 <input
                   type="email"
@@ -127,7 +91,7 @@ export default function Contact() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                   disabled={loading}
-                  className="w-full px-4 py-3 bg-white/10 border border-neon/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon disabled:opacity-70"
+                  className="w-full px-4 py-3 bg-white/10 border border-neon/30 text-white placeholder-gray-400 focus:outline-none focus:border-neon disabled:opacity-70" // Sin rounded-xl
                 />
                 <textarea
                   placeholder="Tu mensaje..."
@@ -136,7 +100,7 @@ export default function Contact() {
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required
                   disabled={loading}
-                  className="w-full px-4 py-3 bg-white/10 border border-neon/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon disabled:opacity-70 resize-none"
+                  className="w-full px-4 py-3 bg-white/10 border border-neon/30 text-white placeholder-gray-400 focus:outline-none focus:border-neon disabled:opacity-70 resize-none" // Sin rounded-xl
                 />
                 <button
                   type="submit"
@@ -160,7 +124,7 @@ export default function Contact() {
                   <motion.p
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`text-center text-sm mt-4 font-medium p-3 rounded-lg border ${
+                    className={`text-center text-sm mt-4 font-medium p-3 border ${ // Sin rounded-lg
                       status.includes('enviado') ? 'text-green-400 bg-green-900/20 border-green-500/30' : 'text-red-400 bg-red-900/20 border-red-500/30'
                     }`}
                   >
@@ -172,18 +136,18 @@ export default function Contact() {
               <div className="space-y-6 text-white">
                 <div className="flex items-center gap-3">
                   <EnvelopeIcon className="w-6 h-6 text-neon" />
-                  <p className="font-medium">hola@pdfpulse.online</p>
+                  <p className="font-medium">contacto@pdfpulse.online</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <PhoneIcon className="w-6 h-6 text-neon" />
-                  <p>+54 11 1234-5678</p>
+                  <p>{t.contact_phone || '+54 11 1234-5678'}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPinIcon className="w-6 h-6 text-neon" />
-                  <p>Buenos Aires, Argentina</p>
+                  <p>{t.contact_address || 'Buenos Aires, Argentina'}</p>
                 </div>
 
-                <div className="mt-8 p-4 bg-neon/10 rounded-xl border border-neon/30">
+                <div className="mt-8 p-4 bg-neon/10 border border-neon/30"> {/* Sin rounded-xl */}
                   <p className="text-sm text-gray-300 leading-relaxed">
                     ¿Tienes una idea para una nueva herramienta? 
                     ¿Encontraste un error? 
@@ -195,8 +159,8 @@ export default function Contact() {
             </div>
           </motion.div>
         </main>
+        <Footer t={t} count={count} />
       </div>
     </>
   );
 }
-
