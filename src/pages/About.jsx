@@ -76,31 +76,6 @@ export default function About() {
               description="Nuestra arquitectura es clara: herramientas gratis (lado del cliente), herramientas de token (lado del servidor con backend NestJS). Siempre sabrás cómo se procesan tus datos."
             />
           </div>
-
-          {/* --- SECCIÓN DE EQUIPO (Placeholder) --- */}
-          <div className="text-center mt-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-neon text-glow">
-              Conoce a los Fundadores
-            </h2>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-10">
-              Somos ingenieros de software y diseñadores apasionados por la tecnología, creando un producto que usaríamos nosotros mismos.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <TeamCard
-                icon={UserIcon}
-                name="Luis Batista"
-                title="Fundador & Desarrollador Principal"
-                email="contacto@pdfpulse.online"
-              />
-              <TeamCard
-                icon={UserIcon}
-                name="[Nombre del Co-Fundador/Diseñador]"
-                title="Diseño UX/UI & Estrategia de Producto"
-                email="contacto@pdfpulse.online"
-              />
-            </div>
-          </div>
         </main>
         
         <Footer count={count} />
