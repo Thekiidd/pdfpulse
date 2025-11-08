@@ -1,25 +1,32 @@
 import { Module } from '@nestjs/common';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { join } from 'path'; // <-- ELIMINADO (ya no se usa)
-import { MailerModule } from '@nestjs-modules/mailer';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ContactModule } from './contact/contact.module';
 import { StatsModule } from './stats/stats.module';
 import { CounterEntity } from './stats/entities/counter.entity';
 import { ProcesadosEntity } from './stats/entities/procesados.entity';
-// import { ServeStaticModule } from '@nestjs/serve-static'; // <-- ELIMINADO
+import { PdfModule } from './pdf/pdf.module'; // Nuevo módulo
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     
+    // 1. Configuración de Rate Limiting (10 peticiones/min)
+    ThrottlerModule.forRoot([{
+      ttl: 60000, 
+      limit: 10,  
+    }]),
+    
+    // Tu TypeORM Module existente
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
         const isProd = configService.get('NODE_ENV') === 'production';
-
         const dbConfig: any = {
           type: 'mysql' as const,
           entities: [CounterEntity, ProcesadosEntity],
@@ -44,23 +51,24 @@ import { ProcesadosEntity } from './stats/entities/procesados.entity';
           dbConfig.password = configService.get('DB_PASSWORD') || '';
           dbConfig.database = configService.get('DB_NAME') || 'pdfpulse_dev';
         }
-
-        console.log('DB CONEXIÓN:', {
-          entorno: isProd ? 'PRODUCCIÓN (Railway)' : 'DESARROLLO (XAMPP)',
-          url: isProd ? 'turntable.proxy.rlwy.net:59019' : undefined,
-          host: isProd ? undefined : dbConfig.host,
-          base: isProd ? 'railway' : dbConfig.database,
-        });
-
         return dbConfig;
       },
       inject: [ConfigService],
     }),
     
+    // Módulos existentes y nuevo módulo PDF
     ContactModule,
     StatsModule,
+    PdfModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // 2. Aplicar ThrottlerGuard globalmente
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

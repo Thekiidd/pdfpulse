@@ -8,6 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const throttler_1 = require("@nestjs/throttler");
+const core_1 = require("@nestjs/core");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const app_controller_1 = require("./app.controller");
@@ -16,6 +18,7 @@ const contact_module_1 = require("./contact/contact.module");
 const stats_module_1 = require("./stats/stats.module");
 const counter_entity_1 = require("./stats/entities/counter.entity");
 const procesados_entity_1 = require("./stats/entities/procesados.entity");
+const pdf_module_1 = require("./pdf/pdf.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -23,6 +26,10 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            throttler_1.ThrottlerModule.forRoot([{
+                    ttl: 60000,
+                    limit: 10,
+                }]),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 useFactory: (configService) => {
@@ -51,21 +58,22 @@ exports.AppModule = AppModule = __decorate([
                         dbConfig.password = configService.get('DB_PASSWORD') || '';
                         dbConfig.database = configService.get('DB_NAME') || 'pdfpulse_dev';
                     }
-                    console.log('DB CONEXIÓN:', {
-                        entorno: isProd ? 'PRODUCCIÓN (Railway)' : 'DESARROLLO (XAMPP)',
-                        url: isProd ? 'turntable.proxy.rlwy.net:59019' : undefined,
-                        host: isProd ? undefined : dbConfig.host,
-                        base: isProd ? 'railway' : dbConfig.database,
-                    });
                     return dbConfig;
                 },
                 inject: [config_1.ConfigService],
             }),
             contact_module_1.ContactModule,
             stats_module_1.StatsModule,
+            pdf_module_1.PdfModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [
+            app_service_1.AppService,
+            {
+                provide: core_1.APP_GUARD,
+                useClass: throttler_1.ThrottlerGuard,
+            },
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
