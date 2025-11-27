@@ -5,7 +5,7 @@ export default function Background() {
   return (
     <>
       {/* Imagen de fondo */}
-      <div 
+      <div
         className="fixed inset-0 -z-10"
         style={{
           backgroundImage: 'url(/Background.jpg)',
@@ -23,8 +23,8 @@ export default function Background() {
         {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-neon rounded-full opacity-70"
-            initial={{ 
+            className="absolute w-1 h-1 bg-neon opacity-70"
+            initial={{
               x: Math.random() * window.innerWidth,
               y: window.innerHeight + 50,
             }}

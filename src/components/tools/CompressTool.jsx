@@ -112,20 +112,6 @@ export default function CompressTool({ incrementCounter }) {
     });
     if (!res.ok) throw new Error('Download failed');
     const blob = await res.blob();
-    setCompressedSize(blob.size);
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const now = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
-    a.href = url;
-    a.download = `pdfpulse_compressed_${quality}_${now}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleCompress = async () => {
-    if (!file) return;
-    setLoading(true);
     setProgress(0);
     setErrorMsg('');
     setCompressedSize(0);
@@ -167,7 +153,7 @@ export default function CompressTool({ incrementCounter }) {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         className={`
-          relative border-2 border-dashed rounded-3xl p-10 text-center transition-all duration-300
+          relative border-2 border-dashed p-10 text-center transition-all duration-300
           ${file ? 'border-neon bg-neon/5' : 'border-neon/30 hover:border-neon hover:bg-neon/5'}
         `}
       >
@@ -195,7 +181,7 @@ export default function CompressTool({ incrementCounter }) {
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-20 h-20 mx-auto bg-neon/10 rounded-full flex items-center justify-center"
+              className="w-20 h-20 mx-auto bg-neon/10 flex items-center justify-center"
             >
               <DocumentIcon className="w-10 h-10 text-neon" />
             </motion.div>
@@ -213,9 +199,9 @@ export default function CompressTool({ incrementCounter }) {
                 key={opt}
                 onClick={() => setQuality(opt)}
                 className={`
-                  px-4 py-2 rounded-lg text-sm font-medium transition-all
-                  ${quality === opt 
-                    ? 'bg-neon text-white shadow-neon-lg' 
+                  px-4 py-2 text-sm font-medium transition-all
+                  ${quality === opt
+                    ? 'bg-neon text-white shadow-neon-lg'
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }
                 `}
@@ -247,7 +233,7 @@ export default function CompressTool({ incrementCounter }) {
 
       {loading && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
-          <div className="h-3 bg-black/50 rounded-full overflow-hidden">
+          <div className="h-3 bg-black/50 overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-neon to-neon-light"
               initial={{ width: 0 }}
@@ -263,7 +249,7 @@ export default function CompressTool({ incrementCounter }) {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-4 bg-neon/10 backdrop-blur-xl rounded-2xl border border-neon/30 text-center"
+          className="p-4 bg-neon/10 backdrop-blur-xl border border-neon/30 text-center"
         >
           <p className="text-lg text-white font-bold">¡Comprimido!</p>
           <p className="text-sm text-gray-300 mt-1">

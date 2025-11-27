@@ -64,7 +64,9 @@ export default function SplitTool({ incrementCounter }) {
         const a = document.createElement('a');
         a.href = url;
         a.download = `${file.name.replace('.pdf', '')}_parte_${i + 1}-${end}.pdf`;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }
 
@@ -86,7 +88,7 @@ export default function SplitTool({ incrementCounter }) {
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         className={`
-          relative border-2 border-dashed rounded-3xl p-10 text-center transition-all duration-300
+          relative border-2 border-dashed p-10 text-center transition-all duration-300
           ${file ? 'border-neon bg-neon/5' : 'border-neon/30 hover:border-neon hover:bg-neon/5'}
         `}
       >
@@ -111,7 +113,7 @@ export default function SplitTool({ incrementCounter }) {
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-20 h-20 mx-auto bg-neon/10 rounded-full flex items-center justify-center"
+              className="w-20 h-20 mx-auto bg-neon/10 flex items-center justify-center"
             >
               <ArrowDownTrayIcon className="w-10 h-10 text-neon" />
             </motion.div>
@@ -131,7 +133,7 @@ export default function SplitTool({ incrementCounter }) {
               max={totalPages}
               value={chunkSize}
               onChange={(e) => setChunkSize(parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              className="w-full h-2 bg-gray-700 appearance-none cursor-pointer slider"
             />
           </div>
           <button
