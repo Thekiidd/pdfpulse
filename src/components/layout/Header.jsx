@@ -41,7 +41,7 @@ export default function Header({ onBack }) {
 
   const displayName = userData?.displayName || currentUser?.email?.split('@')[0] || 'Usuario';
   const photoURL = userData?.photoURL || currentUser?.photoURL;
-  const tokens = userData?.tokens || 0;
+  const tokens = userData?.tokens?.remaining ?? 0;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 px-4 py-4 md:px-8 flex justify-between items-center bg-black/50 backdrop-blur-md border-b border-neon/20">
